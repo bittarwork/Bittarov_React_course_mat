@@ -1,0 +1,21 @@
+# Ignore Node.js modules (node_modules directory)
+node_modules/
+
+# Ignore Microsoft Office files
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.mdb
+*.accdb
+*.txt
+
+# Ignore temporary Office files
+~$*.doc
+~$*.docx
+~$*.xls
+~$*.xlsx
+~$*.ppt
+~$*.pptx
