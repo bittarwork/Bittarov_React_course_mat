@@ -17,6 +17,9 @@ const App = () => {
     fetchTasks();
   }, []);
 
+
+
+
   // إضافة مهمة جديدة
   const addTask = (newTask) => {
     const newTaskObj = {
@@ -36,4 +39,3 @@ const App = () => {
   );
 };
 
-export default App;
