@@ -69,6 +69,7 @@ function App() {
           <Task key={index} task={task} onRemove={() => removeTask(index)} />
         ))}
       </ul> */}
+
       {/* section four:  */}
 
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300">
