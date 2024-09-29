@@ -12,7 +12,6 @@ const ProductList = ({ products, addToCart, addToFavorites, setProductRating }) 
                         product={product}
                         addToCart={addToCart}
                         addToFavorites={addToFavorites}
-                        setProductRating={setProductRating}
                     />
                 ))}
             </div>
