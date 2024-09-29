@@ -34,7 +34,7 @@ function BlogDetails() {
                     <div className="relative">
                         {/* صورة المقال أو صورة رمزية */}
                         <img
-                            src="https://via.placeholder.com/1200x600"
+                            src="https://i.pinimg.com/736x/01/de/75/01de759592ca8c1c396e5cd73e6df4a2.jpg"
                             alt="Blog"
                             className="w-full object-cover h-64"
                         />
