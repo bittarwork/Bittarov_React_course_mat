@@ -8,21 +8,15 @@ const Header = ({ toggleTheme, theme }) => {
                     Library Management
                 </div>
                 <div className="space-x-6">
-                    <Link to="/" className={`transition-colors duration-300 ${theme === 'light' ? 'text-[#17252A] hover:text-[#3AAFA9]' : 'text-[#FEFFFF] hover:text-[#3AAFA9]'}`}>
-                        Home
-                    </Link>
-                    <Link to="/books" className={`transition-colors duration-300 ${theme === 'light' ? 'text-[#17252A] hover:text-[#3AAFA9]' : 'text-[#FEFFFF] hover:text-[#3AAFA9]'}`}>
-                        Books
-                    </Link>
-                    <Link to="/wishlist" className={`transition-colors duration-300 ${theme === 'light' ? 'text-[#17252A] hover:text-[#3AAFA9]' : 'text-[#FEFFFF] hover:text-[#3AAFA9]'}`}>
-                        Wish List
-                    </Link>
-                    <Link to="/favorites" className={`transition-colors duration-300 ${theme === 'light' ? 'text-[#17252A] hover:text-[#3AAFA9]' : 'text-[#FEFFFF] hover:text-[#3AAFA9]'}`}>
-                        Favorites
-                    </Link>
-                    <Link to="/admin" className={`transition-colors duration-300 ${theme === 'light' ? 'text-[#17252A] hover:text-[#3AAFA9]' : 'text-[#FEFFFF] hover:text-[#3AAFA9]'}`}>
-                        Admin Panel
-                    </Link>
+                    {['/', '/books', '/wishlist', '/favorites', '/admin'].map((path, index) => (
+                        <Link
+                            key={index}
+                            to={path}
+                            className={`transition-colors duration-300 ${theme === 'light' ? 'text-[#17252A] hover:text-[#3AAFA9]' : 'text-[#FEFFFF] hover:text-[#3AAFA9]'}`}
+                        >
+                            {path === '/' ? 'Home' : path.substring(1).charAt(0).toUpperCase() + path.slice(2)}
+                        </Link>
+                    ))}
                     <button onClick={toggleTheme} className="ml-6 p-2 bg-[#3AAFA9] text-white rounded-lg transition duration-300 hover:bg-[#2B7A78]">
                         Toggle Theme
                     </button>

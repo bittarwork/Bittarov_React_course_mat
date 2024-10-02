@@ -8,11 +8,11 @@ const BookContext = createContext();
 // Initial state with more details for books
 const initialState = {
     books: [
-        { id: 1, title: '1984', author: 'George Orwell', image: 'https://example.com/images/1984.jpg', description: 'A dystopian novel about totalitarianism and surveillance.', isBorrowed: false },
-        { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', image: 'https://example.com/images/to-kill-a-mockingbird.jpg', description: 'A novel set in the American South, dealing with issues of race and injustice.', isBorrowed: false },
-        { id: 3, title: 'Pride and Prejudice', author: 'Jane Austen', image: 'https://example.com/images/pride-and-prejudice.jpg', description: 'A romantic novel that critiques the British landed gentry at the end of the 18th century.', isBorrowed: false },
-        { id: 4, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', image: 'https://example.com/images/the-great-gatsby.jpg', description: 'A novel about the American dream and the decadence of the Jazz Age.', isBorrowed: false },
-        { id: 5, title: 'Moby Dick', author: 'Herman Melville', image: 'https://example.com/images/moby-dick.jpg', description: 'A novel about the obsessive quest of Captain Ahab to seek revenge on Moby Dick.', isBorrowed: false },
+        { id: 1, title: '1984', author: 'George Orwell', image: 'https://cdn.kobo.com/book-images/c9472126-7f96-402d-ba57-5ba4c0f4b238/353/569/90/False/nineteen-eighty-four-1984-george.jpg', description: 'A dystopian novel about totalitarianism and surveillance.', isBorrowed: false },
+        { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', image: 'https://m.media-amazon.com/images/I/81gepf1eMqL._AC_UF894,1000_QL80_.jpg', description: 'A novel set in the American South, dealing with issues of race and injustice.', isBorrowed: false },
+        { id: 3, title: 'Pride and Prejudice', author: 'Jane Austen', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3eVM4A1fVV7VUHB22MbmPgGOTJg0Z4i40rQ&s', description: 'A romantic novel that critiques the British landed gentry at the end of the 18th century.', isBorrowed: false },
+        { id: 4, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', image: 'https://m.media-amazon.com/images/I/81QuEGw8VPL._AC_UF894,1000_QL80_.jpg', description: 'A novel about the American dream and the decadence of the Jazz Age.', isBorrowed: false },
+        { id: 5, title: 'Moby Dick', author: 'Herman Melville', image: 'https://m.media-amazon.com/images/I/61iwE2SfFnL._AC_UF894,1000_QL80_.jpg', description: 'A novel about the obsessive quest of Captain Ahab to seek revenge on Moby Dick.', isBorrowed: false },
     ],
     wishList: [],
     favorites: [],

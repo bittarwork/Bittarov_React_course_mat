@@ -1,5 +1,3 @@
-// src/App.js
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
 import BookList from './components/BookList';
@@ -8,12 +6,12 @@ import Favorites from './components/Favorites';
 import AdminPanel from './components/AdminPanel';
 import Layout from './components/Layout';
 import { ThemeProvider } from './context/ThemeContext';
-import { BookProvider } from './context/BookContext'; // استيراد BookProvider
+import { BookProvider } from './context/BookContext';
 import BookDetails from "./components/BookDetails"
 function App() {
     return (
         <ThemeProvider>
-            <BookProvider> {/* تضمين BookProvider هنا */}
+            <BookProvider>
                 <Router>
                     <Layout>
                         <Routes>
