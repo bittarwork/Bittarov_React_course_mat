@@ -1,7 +1,6 @@
 // src/context/BookContext.js
 
 import React, { createContext, useReducer, useEffect } from 'react';
-import PropTypes from 'prop-types';
 
 const BookContext = createContext();
 
@@ -107,9 +106,5 @@ export const BookProvider = ({ children }) => {
     );
 };
 
-// PropTypes for type-checking
-BookProvider.propTypes = {
-    children: PropTypes.node.isRequired,
-};
 
 export { BookContext };

@@ -9,6 +9,9 @@ module.exports = {
         customPurple: '#7f5af0',
         customIndigo: '#6246ea',
       },
+      fontFamily: {
+        nunito: ['Nunito', 'sans-serif'],
+      },
       spacing: {
         '128': '32rem',
       },
