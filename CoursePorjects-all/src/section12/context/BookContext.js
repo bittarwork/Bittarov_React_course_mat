@@ -1,10 +1,9 @@
-// src/context/BookContext.js
+import React, { createContext, useReducer } from 'react';
 
-import React, { createContext, useReducer, useEffect } from 'react';
+// إنشاء context
+export const BookContext = createContext();
 
-const BookContext = createContext();
-
-// Initial state with more details for books
+// الحالة الابتدائية
 const initialState = {
     books: [
         { id: 1, title: '1984', author: 'George Orwell', image: 'https://cdn.kobo.com/book-images/c9472126-7f96-402d-ba57-5ba4c0f4b238/353/569/90/False/nineteen-eighty-four-1984-george.jpg', description: 'A dystopian novel about totalitarianism and surveillance.', isBorrowed: false },
@@ -16,95 +15,113 @@ const initialState = {
     wishList: [],
     favorites: [],
     borrowedBooks: [],
-    notification: null,
+    notification: null
 };
 
-// Book reducer function for handling actions
+// reducer لإدارة العمليات المختلفة
 const bookReducer = (state, action) => {
     switch (action.type) {
         case 'ADD_BOOK':
-            if (state.books.some(book => book.id === action.payload.id)) {
-                return { ...state, notification: 'Book already exists.' }; // Prevent adding duplicate book
-            }
-            return { ...state, books: [...state.books, action.payload], notification: 'Book added successfully.' };
-
-        case 'UPDATE_BOOK':
             return {
                 ...state,
-                books: state.books.map(book =>
-                    book.id === action.payload.id ? { ...book, ...action.payload.updates } : book
-                ),
-                notification: 'Book updated successfully.'
+                books: [...state.books, action.payload]
             };
-
         case 'ADD_TO_WISHLIST':
-            if (state.wishList.some(book => book.id === action.payload.id)) {
-                return { ...state, notification: 'Book already in wishlist.' }; // Prevent adding duplicate to wishlist
-            }
-            return { ...state, wishList: [...state.wishList, action.payload], notification: 'Added to wishlist.' };
-
-        case 'ADD_TO_FAVORITES':
-            if (state.favorites.some(book => book.id === action.payload.id)) {
-                return { ...state, notification: 'Book already in favorites.' }; // Prevent adding duplicate to favorites
-            }
-            return { ...state, favorites: [...state.favorites, action.payload], notification: 'Added to favorites.' };
-
-        case 'BORROW_BOOK':
-            if (state.borrowedBooks.some(book => book.id === action.payload.id)) {
-                return { ...state, notification: 'Book already borrowed.' }; // Prevent borrowing duplicate
-            }
-            return { ...state, borrowedBooks: [...state.borrowedBooks, action.payload], notification: 'Book borrowed successfully.' };
-
-        case 'REMOVE_FROM_WISHLIST':
-            return { ...state, wishList: state.wishList.filter(book => book.id !== action.payload.id), notification: 'Removed from wishlist.' };
-
-        case 'REMOVE_BOOK':
-            const updatedBooks = state.books.filter(book => book.id !== action.payload.id);
-            const updatedWishList = state.wishList.filter(book => book.id !== action.payload.id);
-            const updatedFavorites = state.favorites.filter(book => book.id !== action.payload.id);
-            const updatedBorrowedBooks = state.borrowedBooks.filter(book => book.id !== action.payload.id);
-
             return {
                 ...state,
-                books: updatedBooks,
-                wishList: updatedWishList,
-                favorites: updatedFavorites,
-                borrowedBooks: updatedBorrowedBooks,
-                notification: 'Book removed successfully.'
+                wishList: [...state.wishList, action.payload]
             };
-
-        case 'CLEAR_NOTIFICATION':
-            return { ...state, notification: null };
-
+        case 'ADD_TO_FAVORITES':
+            return {
+                ...state,
+                favorites: [...state.favorites, action.payload]
+            };
+        case 'ADD_TO_BORROWED':
+            return {
+                ...state,
+                borrowedBooks: [...state.borrowedBooks, action.payload],
+                books: state.books.map(book => book.id === action.payload ? { ...book, isBorrowed: true } : book)
+            };
+        case 'REMOVE_BOOK':
+            return {
+                ...state,
+                books: state.books.filter(book => book.id !== action.payload)
+            };
+        case 'UPDATE_NOTIFICATION':
+            return {
+                ...state,
+                notification: action.payload
+            };
         default:
             return state;
     }
 };
 
-// Provider component
+// دالة BookProvider
 export const BookProvider = ({ children }) => {
     const [state, dispatch] = useReducer(bookReducer, initialState);
 
-    // Store state to localStorage whenever it changes
-    useEffect(() => {
-        localStorage.setItem('books', JSON.stringify(state.books));
-        localStorage.setItem('wishList', JSON.stringify(state.wishList));
-        localStorage.setItem('favorites', JSON.stringify(state.favorites));
-        localStorage.setItem('borrowedBooks', JSON.stringify(state.borrowedBooks));
-    }, [state]);
+    // الدوال التحليلية
 
-    // Additional computed properties
+    // إحصائيات إجمالي الكتب، المفضلات، القوائم وغيرها
     const getTotalBooks = () => state.books.length;
     const getTotalWishList = () => state.wishList.length;
     const getTotalFavorites = () => state.favorites.length;
     const getTotalBorrowedBooks = () => state.borrowedBooks.length;
 
+    // البحث عن الكتب بواسطة اسم المؤلف
+    const getBooksByAuthor = (author) => state.books.filter(book => book.author === author);
+
+    // البحث عن الكتب المتاحة (غير المستعارة)
+    const getAvailableBooks = () => state.books.filter(book => !book.isBorrowed);
+
+    // إضافة إشعار
+    const addNotification = (message) => {
+        dispatch({ type: 'UPDATE_NOTIFICATION', payload: message });
+        setTimeout(() => {
+            dispatch({ type: 'UPDATE_NOTIFICATION', payload: null });
+        }, 3000); // الإشعار يختفي بعد 3 ثوانٍ
+    };
+
+    // البحث عن الكتب بواسطة كلمة مفتاحية في العنوان أو المؤلف أو الوصف
+    const searchBooks = (keyword) => {
+        return state.books.filter(book =>
+            book.title.toLowerCase().includes(keyword.toLowerCase()) ||
+            book.author.toLowerCase().includes(keyword.toLowerCase()) ||
+            book.description.toLowerCase().includes(keyword.toLowerCase())
+        );
+    };
+
+    // وظائف إضافية لإدارة الكتب في لوحة التحكم
+
+    // إضافة كتاب جديد
+    const addNewBook = (newBook) => {
+        dispatch({ type: 'ADD_BOOK', payload: newBook });
+        addNotification('تمت إضافة كتاب جديد.');
+    };
+
+    // حذف كتاب
+    const removeBook = (bookId) => {
+        dispatch({ type: 'REMOVE_BOOK', payload: bookId });
+        addNotification('تم حذف الكتاب بنجاح.');
+    };
+
     return (
-        <BookContext.Provider value={{ state, dispatch, getTotalBooks, getTotalWishList, getTotalFavorites, getTotalBorrowedBooks }}>
+        <BookContext.Provider value={{
+            state,
+            dispatch,
+            getTotalBooks,
+            getTotalWishList,
+            getTotalFavorites,
+            getTotalBorrowedBooks,
+            getBooksByAuthor,
+            getAvailableBooks,
+            addNotification,
+            searchBooks,
+            addNewBook,
+            removeBook
+        }}>
             {children}
         </BookContext.Provider>
     );
 };
-
-
-export { BookContext };

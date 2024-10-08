@@ -1,14 +1,22 @@
 import React, { useContext, useState } from 'react';
 import { BookContext } from '../context/BookContext';
+import ConfirmationModal from '../models/ConfirmationModal';
 
 const AdminPanel = () => {
-    const { state, dispatch, getTotalBooks, getTotalWishList, getTotalFavorites, getTotalBorrowedBooks } = useContext(BookContext);
+    const { state, dispatch, getTotalBooks, getTotalWishList, getTotalFavorites, getTotalBorrowedBooks, addNotification } = useContext(BookContext);
     const [newBook, setNewBook] = useState({ title: '', author: '', id: Date.now(), image: '', description: '' });
     const [editingBook, setEditingBook] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [bookToRemove, setBookToRemove] = useState(null);
 
     const handleAddBook = () => {
-        dispatch({ type: 'ADD_BOOK', payload: newBook });
-        setNewBook({ title: '', author: '', id: Date.now(), image: '', description: '' });
+        if (!newBook.title || !newBook.author || !newBook.image || !newBook.description) {
+            addNotification('يرجى ملء جميع الحقول.'); // Alert for empty fields
+            return;
+        }
+        dispatch({ type: 'ADD_BOOK', payload: { ...newBook, id: Date.now() } });
+        addNotification('تمت إضافة كتاب جديد.');
+        resetBookForm();
     };
 
     const handleEditBook = (book) => {
@@ -17,83 +25,96 @@ const AdminPanel = () => {
     };
 
     const handleUpdateBook = () => {
-        dispatch({ type: 'UPDATE_BOOK', payload: { id: editingBook.id, updates: newBook } });
+        if (!newBook.title || !newBook.author || !newBook.image || !newBook.description) {
+            addNotification('يرجى ملء جميع الحقول.'); // Alert for empty fields
+            return;
+        }
+        dispatch({ type: 'REMOVE_BOOK', payload: editingBook.id });
+        dispatch({ type: 'ADD_BOOK', payload: { ...newBook, id: editingBook.id } });
+        addNotification('تم تحديث الكتاب.');
+        resetBookForm();
+    };
+
+    const resetBookForm = () => {
         setEditingBook(null);
         setNewBook({ title: '', author: '', id: Date.now(), image: '', description: '' });
     };
 
     const handleRemoveBook = (bookId) => {
-        dispatch({ type: 'REMOVE_BOOK', payload: { id: bookId } });
+        setBookToRemove(bookId);
+        setIsModalOpen(true);
+    };
+
+    const confirmRemoveBook = () => {
+        dispatch({ type: 'REMOVE_BOOK', payload: bookToRemove });
+        addNotification('تم حذف الكتاب بنجاح.');
+        setIsModalOpen(false);
+        setBookToRemove(null);
     };
 
     return (
         <div className="p-6 bg-gray-100 rounded-lg shadow-md max-w-4xl mx-auto mt-16">
-            <h2 className="text-3xl font-semibold mb-6 text-center">Admin Panel</h2>
+            <h2 className="text-4xl font-semibold mb-6 text-center text-gray-800">لوحة التحكم للمدير</h2>
 
             {/* Add/Edit Book Section */}
             <div className="bg-white p-4 rounded-lg shadow mb-6">
-                <h3 className="text-2xl font-medium mb-4 text-center">{editingBook ? 'Edit Book' : 'Add New Book'}</h3>
+                <h3 className="text-3xl font-medium mb-4 text-center text-gray-700">{editingBook ? 'تعديل كتاب' : 'إضافة كتاب جديد'}</h3>
                 <input
                     type="text"
-                    placeholder="Book Title"
+                    placeholder="عنوان الكتاب"
                     value={newBook.title}
                     onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
                     className="border rounded p-3 w-full mb-2 focus:outline-none focus:ring focus:border-blue-500"
                 />
                 <input
                     type="text"
-                    placeholder="Author"
+                    placeholder="المؤلف"
                     value={newBook.author}
                     onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
                     className="border rounded p-3 w-full mb-2 focus:outline-none focus:ring focus:border-blue-500"
                 />
                 <input
                     type="text"
-                    placeholder="Image URL"
+                    placeholder="رابط الصورة"
                     value={newBook.image}
                     onChange={(e) => setNewBook({ ...newBook, image: e.target.value })}
                     className="border rounded p-3 w-full mb-2 focus:outline-none focus:ring focus:border-blue-500"
                 />
                 <textarea
-                    placeholder="Description"
+                    placeholder="وصف الكتاب"
                     value={newBook.description}
                     onChange={(e) => setNewBook({ ...newBook, description: e.target.value })}
                     className="border rounded p-3 w-full mb-4 focus:outline-none focus:ring focus:border-blue-500"
                 />
                 <button
                     onClick={editingBook ? handleUpdateBook : handleAddBook}
-                    className="bg-blue-500 text-white py-2 px-4 rounded-lg w-full hover:bg-blue-600 transition duration-200"
+                    className="bg-blue-600 text-white py-2 px-4 rounded-lg w-full hover:bg-blue-700 transition duration-200"
                 >
-                    {editingBook ? 'Update Book' : 'Add Book'}
+                    {editingBook ? 'تحديث الكتاب' : 'إضافة كتاب'}
                 </button>
             </div>
 
             {/* Statistics Section */}
             <div className="bg-white p-4 rounded-lg shadow mb-6">
-                <h3 className="text-2xl font-medium mb-4 text-center">Statistics</h3>
+                <h3 className="text-3xl font-medium mb-4 text-center text-gray-700">الإحصائيات</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-blue-100 p-4 rounded-lg shadow text-center">
-                        <h4 className="text-lg font-semibold">Total Books</h4>
-                        <p className="text-2xl font-bold">{getTotalBooks()}</p>
-                    </div>
-                    <div className="bg-green-100 p-4 rounded-lg shadow text-center">
-                        <h4 className="text-lg font-semibold">Total Wish List</h4>
-                        <p className="text-2xl font-bold">{getTotalWishList()}</p>
-                    </div>
-                    <div className="bg-yellow-100 p-4 rounded-lg shadow text-center">
-                        <h4 className="text-lg font-semibold">Total Favorites</h4>
-                        <p className="text-2xl font-bold">{getTotalFavorites()}</p>
-                    </div>
-                    <div className="bg-red-100 p-4 rounded-lg shadow text-center">
-                        <h4 className="text-lg font-semibold">Total Borrowed Books</h4>
-                        <p className="text-2xl font-bold">{getTotalBorrowedBooks()}</p>
-                    </div>
+                    {[
+                        { title: 'إجمالي الكتب', value: getTotalBooks(), bgColor: 'bg-blue-100' },
+                        { title: 'إجمالي قائمة الرغبات', value: getTotalWishList(), bgColor: 'bg-green-100' },
+                        { title: 'إجمالي المفضلات', value: getTotalFavorites(), bgColor: 'bg-yellow-100' },
+                        { title: 'إجمالي الكتب المستعارة', value: getTotalBorrowedBooks(), bgColor: 'bg-red-100' },
+                    ].map((stat, index) => (
+                        <div key={index} className={`${stat.bgColor} p-4 rounded-lg shadow text-center`}>
+                            <h4 className="text-lg font-semibold">{stat.title}</h4>
+                            <p className="text-3xl font-bold">{stat.value}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
 
             {/* Current Books List */}
             <div className="bg-white p-4 rounded-lg shadow">
-                <h3 className="text-2xl font-medium mb-4 text-center">Current Books</h3>
+                <h3 className="text-3xl font-medium mb-4 text-center text-gray-700">الكتب الحالية</h3>
                 {state.books.length > 0 ? (
                     <ul>
                         {state.books.map((book) => (
@@ -110,22 +131,30 @@ const AdminPanel = () => {
                                         onClick={() => handleEditBook(book)}
                                         className="bg-yellow-500 text-white py-1 px-2 rounded hover:bg-yellow-600 transition duration-200"
                                     >
-                                        Edit
+                                        تعديل
                                     </button>
                                     <button
                                         onClick={() => handleRemoveBook(book.id)}
                                         className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 transition duration-200"
                                     >
-                                        Remove
+                                        حذف
                                     </button>
                                 </div>
                             </li>
                         ))}
                     </ul>
                 ) : (
-                    <p className="text-center text-gray-500">No books available</p>
+                    <p className="text-center text-gray-500">لا توجد كتب متاحة</p>
                 )}
             </div>
+
+            {/* Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={confirmRemoveBook}
+                message="هل أنت متأكد أنك تريد حذف هذا الكتاب؟"
+            />
         </div>
     );
 };
